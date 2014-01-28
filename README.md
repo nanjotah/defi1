@@ -12,4 +12,5 @@ We chose tweepy against python-twitter because httplib2 which python-twitter wil
 
 
 geopy package can be found at https://github.com/geopy/geopy
+
 tweepy package can be found at https://github.com/tweepy/tweepy
