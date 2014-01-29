@@ -12,6 +12,7 @@ def haversine(lon1, lat1, lon2, lat2):
     """
     Compute distance between two points using the Haversine formula. 
     Coordinates must be specified in decimal degrees.
+    Still gives odd results
     """
     # Convert decimal degrees to radians using builtin math library
     lon1, lat1, lon2, lat2 = map(radians, [lon1, lat1, lon2, lat2])
