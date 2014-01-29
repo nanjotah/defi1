@@ -32,10 +32,10 @@ def distance_from_paris_h(longitude, latitude):
     distance = haversine(paris[0], paris[1], longitude, latitude)
     return distance
 
-def distance_from_paris_geopy(longitude, latitude):
+def distance_from_paris_geopy(coordinates):
     """
     Compute distance from Paris given arbitrary coordinates using geopy package
     """
-    point = (longitude, latitude)
+    point = (coordinates[1],coordinates[0])
     distance = vincenty(paris, point).km
     return distance 

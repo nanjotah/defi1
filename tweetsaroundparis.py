@@ -5,34 +5,73 @@
 
 import utils
 import sys
-from twitterapi import twitter
+from twitterapi import Twitter
 import argparse
+from operator import itemgetter
 
 def args_parse():
-    """
-    This function parses command line arguments we should pass to the script
-    """
-    # Arguments definition and help
+    """ Parses command line arguments """
     parser = argparse.ArgumentParser(description = "Returns tweets and their geolocalized distances from Paris.")
     parser.add_argument("hashtag", metavar = '#hashtag', type=str, nargs='?', help='Twitter hashtag to look for (without # sign)')
     args = parser.parse_args()
-    # If no argument is provided the script exits otherwise it returns correctly formatted arguments
     if args.hashtag == None : 
         print "You must specify a search term, otherwise nothing can be searched"
         sys.exit()
     else :
         return args
     
+def tweetstream_arrange_by_distance_from_paris(tweets_list):
+    """ Sorts the tweetstream list """
+    tweets_distance = []
+    for i,tweet in enumerate(tweets_list) :
+        tweets_distance.append({
+            'tweet':tweet,
+            'distance':utils.distance_from_paris_geopy(tweet['coordinates']['coordinates'])
+            })
+    tweets_arranged = sorted(tweets_distance, key=itemgetter('distance'))
+    return tweets_arranged
+
+def tweetsearch_arrange_by_distance_from_paris(tweets_list):
+    """ Sorts the tweetsearch list """
+    tweets_distance = []
+    for i in tweets_list:
+        tweets_distance.append({
+            "tweet":i["tweet"],
+            "distance":utils.distance_from_paris_geopy(i["coordinates"])
+            })
+    tweets_arranged = sorted(tweets_distance, key=itemgetter('distance'))
+    return tweets_arranged
     
-if __name__ == "__main__" :
-    """
-    Main function
-    """
+def streamversion():
+    """ The main program using stream API """
     # Argument parsing
     args = args_parse()
     # Twitter session initialisation
-    twit_app = twitter()
+    twit_app = Twitter()
     # Twitter search
-    tweets_list = twit_app.search("%s"%args.hashtag)
-    print tweets_list
+    tweets_stream = twit_app.streamgeotweets(args.hashtag)
+    search_results = twit_app.get10geotweetsfromstream(tweets_stream)
+    tweets_list_sorted = tweetstream_arrange_by_distance_from_paris(search_results)
+    for i in tweets_list_sorted :
+        print "TWEET: %s\n DISTANCE:%s"%(i['tweet']["text"],i['distance'])
+
+def searchversion():
+    """ The main program using Search API """
+    # Argument parsing
+    args = args_parse()
+    # Twitter session initialisation
+    twit_app = Twitter()
+    # Twitter search
+    tweets_search = twit_app.searchgeotweets(args.hashtag)
+    # Distances
+    tweets_list_sorted = tweetsearch_arrange_by_distance_from_paris(tweets_search)
+    for i in tweets_list_sorted :
+        print "TWEET: %s\n DISTANCE:%s"%(i['tweet'].text,i['distance'])
     
+if __name__ == "__main__" :
+    """
+    Main function 
+    """
+    searchversion()
+    
+        
