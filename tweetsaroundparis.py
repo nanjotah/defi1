@@ -53,7 +53,7 @@ def streamversion():
     search_results = twit_app.get10geotweetsfromstream(tweets_stream)
     tweets_list_sorted = tweetstream_arrange_by_distance_from_paris(search_results)
     for i in tweets_list_sorted :
-        print "TWEET: %s\n DISTANCE:%s"%(i['tweet']["text"],i['distance'])
+        print "TWEET: %s\nDISTANCE: %skm"%(i['tweet']["text"],i['distance'])
 
 def searchversion():
     """ The main program using Search API """
@@ -65,8 +65,9 @@ def searchversion():
     tweets_search = twit_app.searchgeotweets(args.hashtag)
     # Distances
     tweets_list_sorted = tweetsearch_arrange_by_distance_from_paris(tweets_search)
-    for i in tweets_list_sorted :
-        print "TWEET: %s\n DISTANCE:%s"%(i['tweet'].text,i['distance'])
+    for compte,i in enumerate(tweets_list_sorted) :
+        if compte < 10:
+            print "TWEET: %s\nDISTANCE: %skm"%(i['tweet'].text,i['distance'])
     
 if __name__ == "__main__" :
     """
